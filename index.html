@@ -203,6 +203,23 @@
                 $(".form-signin").css("display", "block");
             });
 
+            $("#signInButton").click(function(){
+                $.ajax({
+                    url: "php/signin.php",
+                    data: {
+                        username: $("#username").val().trim(),
+                        password: $("#password").val().trim(),
+                    },
+                    type: "post",
+                    error: function(){
+                        alert("something bad happened");
+                    },
+                    success: function(result) {
+                        alert(result);
+                    }
+                });
+            });
+
             $("#minRacks").change(function(){
                 var minRacks = parseInt($(this).val());
                 hideMarkers(minRacks);
@@ -562,7 +579,7 @@
         <input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
         <label for="password" class="sr-only">Password</label>
         <input type="password" id="password" class="form-control" placeholder="Password" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <button id="signInButton" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         <br />
     </div>
 </div>
