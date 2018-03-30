@@ -1,0 +1,131 @@
+OBJECTID,SOBI_ID,NAME,ADDRESS,DESCRIPTION,HAS_KIOSK,RACKS_AMOUNT,NETWORK_ID,SOBI_AREA_ID,LONGITUDE,LATITUDE,LAST_IMPORT_DATE
+1,435,Gore Park - 74,"20 King Street East, Hamilton",,No,16,24,86,-79.8686635494232,43.2563168593987,2017-07-31
+2,436,James North at Mulberry - 76,"200 James Street North, Hamilton",,No,20,24,86,-79.8667430877686,43.2618194527922,2017-07-31
+3,527,Seedworks - 81B,"126 Catharine Street North, Hamilton",Outside SoBi Hamilton Office,No,16,24,86,-79.8636129498482,43.259111191991,2017-07-31
+4,530,Cootes at York and King,"4 Cootes Drive, Hamilton",,No,12,24,86,-79.9504199624062,43.2656789801579,2017-07-31
+5,535,Osler at Grant - 6,"89-101 Osler Drive, Hamilton",,No,10,24,86,-79.9426434441838,43.2595496051254,2017-07-31
+6,536,Main at Whitney - 7,"1850, Main Street West, University Gardens, Ancaster, Hamilton, Ontario",,No,9,24,86,-79.9397903680801,43.2520523493589,2017-07-31
+7,537,Osler at Main - 8,"1686 Main Street West, Hamilton",,No,10,24,86,-79.9342255404988,43.2572539435115,2017-07-31
+8,538,Whitney at Lower Horning - 9,"377, Whitney Avenue, University Gardens, Hamilton, Ontario",,No,10,24,86,-79.9354198942367,43.2518522355378,2017-07-31
+9,539,Sanders at Binkley - 12,"58, Sanders Boulevard, University Gardens, Hamilton, Ontario",,No,10,24,86,-79.9297991394997,43.2587537277254,2017-07-31
+10,540,Sanders at Hollywood - 13,"26, Sanders Boulevard, University Gardens, Hamilton, Ontario",,No,10,24,86,-79.9264810904732,43.2599031676959,2017-07-31
+11,541,King at Cline - 18,"1108 King Street West, Hamilton",,No,10,24,86,-79.9092948353051,43.2605367847852,2017-07-31
+12,542,Sterling at Whitton - 19,"139, Sterling Street, Westdale, Hamilton, Ontario",,No,11,24,86,-79.9133658840373,43.2622271626907,2017-07-31
+13,543,Sterling at Haddon - 20,"71 Sterling Street, Hamilton",,No,10,24,86,-79.9102672934532,43.2620255217978,2017-07-31
+14,544,Westdale Library -21,"955 King Street West, Hamilton",,No,9,24,86,-79.9035966396332,43.2627159943772,2017-07-31
+15,545,Emerson at Whitney -22,"202, Emerson Street, University Gardens, Hamilton, Ontario",,No,10,24,86,-79.9222158171462,43.2521423210113,2017-07-31
+16,546,Rail Trail at Emerson - 23,"Hamilton Brantford Rail Trail, Emerson Street, Westdale, Hamilton, Ontario",,No,12,24,86,-79.9208028150996,43.2546745875963,2017-07-31
+17,547,Westdale Village - 24,"25 Marion Avenue South, Hamilton",,No,11,24,86,-79.9050879478454,43.2620147788811,2017-07-31
+18,548,Rail Trail at Stroud - 27,"Hamilton Brantford Rail Trail, Emerson Street, Westdale, Hamilton, Ontario",,No,10,24,86,-79.9166152756283,43.2535916384655,2017-07-31
+19,549,Main at Columbia College - 28,"82 Newton Avenue, Hamilton",,No,10,24,86,-79.9078586697578,43.2585671813327,2017-07-31
+20,550,Longwood at King - 30,"881, King Street West, Westdale, Hamilton, Ontario",,No,10,24,86,-79.9009418422827,43.2630174571678,2017-07-31
+21,551,Longwood at Edgevale - 31,"78, Longwood Road North, Westdale, Hamilton, Ontario",,No,10,24,86,-79.8993094512,43.2662112220324,2017-07-31
+22,552,Chedoke Stairs - 32,"Chedoke Park, Hamilton, Ontario",,No,10,24,86,-79.90823779724,43.2460802627748,2017-07-31
+23,553,Main at Longwood - 33,"925, Main Street West, McMaster Innovation Park, Hamilton, Ontario",,No,10,24,86,-79.9024303171158,43.2588992373017,2017-07-31
+24,554,Macklin at King - 34,"768, King Street West, McMaster Innovation Park, Hamilton, Ontario",,No,10,24,86,-79.8964982026467,43.2621672804245,2017-07-31
+25,555,McMaster Innovation Park - 35,"175 Longwood Road South, Hamilton",,No,6,24,86,-79.9011786282063,43.2565688527085,2017-07-31
+26,556,Dundurn Stairs - 36,"534, Dundurn Street South, Chedoke Park, Hamilton, Ontario",,No,10,24,86,-79.8947787566411,43.2465214141618,2017-07-31
+27,557,Dundurn at Aberdeen - 38,"330-346 Dundurn Street South, Hamilton",,No,20,24,86,-79.8926559090614,43.251458458949,2017-07-31
+28,558,Dundurn St S - 39,"229-233 Dundurn Street South, Hamilton",,No,10,24,86,-79.8909067737901,43.2548127612063,2017-07-31
+29,559,Main at Dundurn - 40,"91 Dundurn Street South, Hamilton",,No,11,24,86,-79.8892092704773,43.2596630111222,2017-07-31
+30,560,King at Dundurn - 42,"9-11 Dundurn Street North, Hamilton",,No,10,24,86,-79.8879808187485,43.2624093356692,2017-07-31
+31,562,Charlton at Locke - 44,"La Jardinere Flowers, 246, Locke Street South, Hess Village, Hamilton, Ontario",,No,10,24,86,-79.886746253805,43.2533465230541,2017-07-31
+32,563,Locke at Hunter - 45,"137, Locke Street South, Hess Village, Hamilton, Ontario",,No,10,24,86,-79.885101467371,43.2565561553962,2017-07-31
+33,564,Locke at Napier - 46,"64, Locke Street North, Hess Village, Hamilton, Ontario",,No,10,24,86,-79.8827367298478,43.2628018805713,2017-07-31
+34,565,York at Inchbury - 47,"460 York Boulevard, Hamilton",,No,10,24,86,-79.8819495909127,43.2659146108256,2017-07-31
+35,566,Aberdeen at Queen - 48,"ABERDEEN at SPRUCESIDE, Hamilton",,No,10,24,86,-79.8836993988543,43.2488085584277,2017-07-31
+36,567,Herkimer at Queen - 49,"178, Herkimer Street, Hess Village, Hamilton, Ontario",,No,10,24,86,-79.8820853233337,43.2514086422204,2017-07-31
+37,568,Ryerson Recreation Centre - 50,"251 Duke Street, Hamilton",,No,10,24,86,-79.8819466027797,43.2540651616154,2017-07-31
+38,569,Hunter at Hess - 51,"131-133 Hess Street South, Hamilton",,No,15,24,86,-79.878896176815,43.255383107656,2017-07-31
+39,570,Queen at Peter - 53,"80, Queen Street North, Hess Village, Hamilton, Ontario",,No,10,24,86,-79.877606006297,43.2618861338306,2017-07-31
+40,571,40 Oxford - 54,"40-48 Oxford Street, Hamilton",,No,10,24,86,-79.8777937889099,43.2645637268914,2017-07-31
+41,572,Durand Park - 55,"Durand Park, Park Street South, Corktown, Hamilton, Ontario",,No,14,24,86,-79.8765896596649,43.2498930603697,2017-07-31
+42,573,James S at Charlton - 56,"232 James Street South, Hamilton",,No,10,24,86,-79.8720555723035,43.2496354495324,2017-07-31
+43,574,Bay at Bold - 57,"100 Bold Street, Hamilton",,No,10,24,86,-79.8753935613187,43.2538302267771,2017-07-31
+44,575,City Hall - 59,"58 Bay Street South, Hamilton",,No,17,24,86,-79.8744987564414,43.2561324863605,2017-07-31
+45,576,Bay at York - 60,"55, Bay Street North, Hess Village, Hamilton, Ontario",,No,16,24,86,-79.8729990705895,43.2597759765548,2017-07-31
+46,577,Bay at Mulberry - 62,"177, Bay Street North, Hess Village, Hamilton, Ontario",,No,11,24,86,-79.8718030750752,43.2631984415745,2017-07-31
+47,578,Bay at Strachan - 63,"325 Bay Street North, Hamilton",,No,10,24,86,-79.8678305692086,43.267932395204,2017-07-31
+48,579,Bayfront Park - 64,"Harbour Front Drive, North End, Hamilton, Ontario",,No,10,24,86,-79.8713484406471,43.2692667929571,2017-07-31
+49,580,Ainslie at Emerson - 25,"65 Ainslie Avenue, Hamilton",,No,7,24,86,-79.9234422627427,43.2495181157076,2017-07-31
+50,581,Strachan at Mary - 66,"127, Strachan Street East, North End, Hamilton, Ontario",,No,7,24,86,-79.8594326469212,43.2656936955384,2017-07-31
+51,582,Hughson at Picton - 67,"448, Hughson Street North, North End, Hamilton, Ontario",,No,10,24,86,-79.861626657542,43.2701169222876,2017-07-31
+52,583,Discovery Drive - 68,"Waterfront Trail, Hamilton",,No,10,24,86,-79.8602977395058,43.2760668463673,2017-07-31
+53,585,Eastwood Arena - 70,"111, Burlington Street East, North End, Hamilton, Ontario",,No,10,24,86,-79.856711442486,43.271621271914,2017-07-31
+54,586,Catherine at Young - 71,"175 Catharine Street South, Hamilton",,No,10,24,86,-79.8677950761702,43.2496648107707,2017-07-31
+55,587,Main at Macnab -75,"50 Main Street West, Hamilton",,No,10,24,86,-79.8714503645897,43.2558695198693,2017-07-31
+56,588,Ferguson at Barton - 77,"186, Ferguson Avenue North, Beasley, Hamilton, Ontario",,No,10,24,86,-79.8582423171631,43.262056982995,2017-07-31
+57,589,Ferrie at Furguson -78,"206, Ferrie Street East, North End, Hamilton, Ontario",,No,5,24,86,-79.8548984527588,43.2666179450643,2017-07-31
+58,590,Ferguson at Cannon - 79,"156, Cannon Street East, Beasley, Hamilton, Ontario",,No,10,24,86,-79.8598228455297,43.2587508364231,2017-07-31
+59,591,Ferguson at King William - 80,"4-12 Ferguson Avenue North, Hamilton",,No,8,24,86,-79.8614431097373,43.2551792486624,2017-07-31
+60,592,King William at John - 82,"32-36 John Street North, Hamilton",,No,8,24,86,-79.8658043146133,43.2573590110152,2017-07-31
+61,593,Victoria at Barton - 83,"286-300 Victoria Avenue North, Hamilton",,No,10,24,86,-79.853318631649,43.2612451904613,2017-07-31
+62,594,Cannon at Oak - 85,"362 Cannon Street East, Hamilton",,No,8,24,86,-79.8513960078799,43.2567834448025,2017-07-31
+63,596,Wentworth Steps - 86,"203 Wentworth Street South, Hamilton",,No,15,24,86,-79.8518635332584,43.2448793677635,2017-07-31
+64,597,Stinson at Blythe - 87,"12-38 Blythe Street, Hamilton",,No,8,24,86,-79.8550984051804,43.2480282225403,2017-07-31
+65,598,Hunter at Furguson - 88,"175, Hunter Street East, Corktown, Hamilton, Ontario",,No,8,24,86,-79.8631878197193,43.251798383774,2017-07-31
+66,599,Corktown Park - 89,"174, Ferguson Avenue South, Corktown, Hamilton, Ontario",,No,11,24,86,-79.8641461491451,43.2492552510953,2017-07-31
+67,601,Stinson at West - 92,"93, West Avenue South, Corktown, Hamilton, Ontario",,No,10,24,86,-79.859726111821,43.2494985579078,2017-07-31
+68,602,King William at Victoria - 94,"338, King William Street, Beasley, Hamilton, Ontario",,No,7,24,86,-79.8558238148689,43.2541543623113,2017-07-31
+69,603,Barton at Wentworth - 95,"Fire Station No.8, Barton Street East, Beasley, Hamilton, Ontario",,No,8,24,86,-79.8455311859786,43.2590802780708,2017-07-31
+70,604,Cannon at Wentworth - 96,"451, Cannon Street East, Beasley, Hamilton, Ontario",,No,8,24,86,-79.8475054418754,43.2559617394464,2017-07-31
+71,605,Wentworth at King - 97,"16 Wentworth Street South, Hamilton",,No,10,24,86,-79.8491035401821,43.2519903841655,2017-07-31
+72,606,Bay at Macaulay - 99,"492 Bay Street North, Hamilton",,No,8,24,86,-79.8662710189819,43.2723622589834,2017-07-31
+73,607,Haymarket at Hughson - 100,"22 Haymarket Street, Hamilton",,No,10,24,86,-79.8688338696957,43.2523698048509,2017-07-31
+74,608,James at Colbourne - 101,"295 James Street North, Hamilton",,No,11,24,86,-79.8660421593136,43.2637774120007,2017-07-31
+75,609,Ferguson at King - 102,"4523 Ferguson Avenue South, Hamilton",,No,10,24,86,-79.862235635519,43.2540049186189,2017-07-31
+76,610,Cannon at Birch (Powell Park) - 103,"72 Harvey Street, Hamilton",,No,10,24,86,-79.8412889242172,43.2550461330614,2017-07-31
+77,611,Cannon at Sherman - 104,"61-65 Sherman Avenue North, Hamilton",,No,8,24,86,-79.8374917817979,43.2533992835566,2017-07-31
+78,612,Delaware at Myrtle - 106,"17, Delaware Avenue, Inch Park, Hamilton, Ontario",,No,10,24,86,-79.8495236914621,43.2480454302898,2017-07-31
+79,613,Maplewood at Springer - 108,"71, Maplewood Avenue, Hamilton, Ontario",,No,10,24,86,-79.8370805382729,43.2451509463897,2017-07-31
+80,614,Gage Park - Maplewood - 109,"190 Gage Avenue South, Hamilton",,No,20,24,86,-79.8304098844528,43.2434481870157,2017-07-31
+81,622,McMaster Emerson - 15,"Main Street West, Emerson at Main, Hamilton",,No,10,24,86,-79.9197877943516,43.2580387928984,2017-07-31
+82,623,McMaster Arthur Bourns - 14,"2000 College Court, McMaster University, Hamilton",,No,10,24,86,-79.922358671032,43.2599690032886,2017-07-31
+83,624,McMaster Health Sciences - 10,"University Avenue, McMaster University, Hamilton",,No,21,24,86,-79.9181025906397,43.2605776303108,2017-07-31
+84,625,McMaster Mary Keyes - 16,"Matthews Hall, Scholars Road, Westdale, Hamilton, Ontario",,No,10,24,86,-79.922246709466,43.2624601200206,2017-07-31
+85,626,McMaster Stadium - 11,"Stearn Drive, McMaster University, Hamilton",,No,10,24,86,-79.9186813831329,43.2645813054726,2017-07-31
+86,631,Hunter GO Centre - 72,"36 Hunter Street East, Hamilton",,No,10,24,86,-79.8694869875908,43.2534354664167,2017-07-31
+87,707,McMaster Student Centre - 17,"Sterling Street, McMaster University, Hamilton",,No,25,24,86,-79.9171471595764,43.2627433396647,2017-07-31
+88,708,York at Macnab - 61,"25 York Boulevard, Hamilton",,No,19,24,86,-79.8691919445991,43.2590105943361,2017-07-31
+89,709,Park at Robinson - 58,"80-92 Robinson Street, Hamilton",,No,10,24,86,-79.8749090863127,43.2515957745917,2017-07-31
+90,712,West at Cannon - 84,"144 West Avenue North, Hamilton",,No,10,24,86,-79.8561337635964,43.257877862291,2017-07-31
+91,732,Melbourne at Locke,"11-15 Melbourne Street, Hamilton",,No,8,24,86,-79.8859572264425,43.2552015794511,2017-07-31
+92,765,Princess Point - 29,"809 Desjardins Recreation Trail, Hamilton",,No,12,24,86,-79.8945270389426,43.2729912871819,2017-07-31
+93,778,Aberdeen at Studholme - 37,"34 Studholme Road, Hamilton",,No,10,24,86,-79.899692892407,43.2526283084979,2017-07-31
+94,779,Hunter at Park,"61 Hurst Place, Hamilton",,No,10,24,86,-79.8733946157064,43.2543192007999,2017-07-31
+95,780,Main at John,"57 John Street South, Hamilton",,No,8,24,86,-79.867180287838,43.2545294350613,2017-07-31
+96,802,Hess at king,"15 Hess Street North, Hamilton",,No,10,24,86,-79.8772117495537,43.2591258421211,2017-07-31
+97,830,Rifle Range at Rail Trail,"64 Rifle Range Road, Hamilton",,No,10,24,86,-79.9298771288198,43.2554850097816,2017-07-31
+98,866,Augusta at John,"62-64 Augusta Street, Hamilton",,No,10,24,86,-79.868980050087,43.2516323287804,2017-07-31
+99,867,Queen at George,"34-54 Queen Street South, Hamilton",,No,5,24,86,-79.8792743682861,43.2582605017277,2017-07-31
+100,869,Mary at Cannon - 00,"134-136 Cannon Street East, Hamilton",,No,10,24,86,-79.8618949949741,43.2594315406973,2017-07-31
+101,894,Forsyth at Sterling,"96, Forsyth Avenue North, Westdale, Hamilton, Ontario",,No,20,24,86,-79.9157819151878,43.2630597628121,2017-07-31
+102,903,Duke at James,"1-27 Duke Street, Hamilton",,No,10,24,86,-79.8713980615139,43.2517348921705,2017-07-31
+103,904,King William at Hughson,"41 King William Street, Hamilton",,No,8,24,86,-79.867267459631,43.2571714836429,2017-07-31
+104,905,Tisdale at Main No Frills,"9-23 Tisdale Street South, Hamilton",,No,10,24,86,-79.8530799150467,43.2519155987909,2017-07-31
+105,921,Frid at Main,"44 Frid Street, Hamilton",,No,10,24,86,-79.8926237225533,43.2594051705931,2017-07-31
+106,924,James at Guise,"2-30 Guise Street, Hamilton",,No,11,24,86,-79.8614859580994,43.2738435350677,2017-07-31
+107,945,Stadium,"17A Cannon Street East, Hamilton",,No,15,24,86,-79.8312360048294,43.2515229275961,2017-07-31
+108,959,West Harbour GO Station,"380 James Street North, Hamilton",,No,10,24,86,-79.8653939366341,43.2660305443776,2017-07-31
+109,960,Pier 4,"50 Leander Drive, Hamilton",,No,20,24,86,-79.8668973147869,43.2726005152155,2017-07-31
+110,1042,Van Wagners,"Waterfront Trail, Hamilton",,Yes,10,24,172,-79.7663875669241,43.2600077732807,2017-07-31
+111,1063,Main and Wellington,"250 Main Street East, Hamilton",,No,6,24,86,-79.8600858449936,43.2528181468654,2017-07-31
+112,1252,Cumberland at Blake ,"237-243 Cumberland Avenue, Hamilton",,No,6,24,86,-79.8405084013939,43.2433309556342,2017-07-31
+113,1253,Main  at Eastbourne,"700 Main Street East, Hamilton",,No,10,24,86,-79.8420184850693,43.2481411619247,2017-07-31
+114,1287,Cannon at Ottawa,"1182-1188 Cannon Street East, Hamilton",,No,10,24,86,-79.8180502653122,43.2475653052787,2017-07-31
+115,1397,King at Mary,"151-163 Hamilton Regional Road 8, Hamilton",,No,6,24,86,-79.8643780499697,43.2551960624806,2017-07-31
+116,1468,270 Sherman,"272 Sherman Avenue North, Hamilton",,No,8,24,86,-79.8343902826309,43.2603134676052,2017-07-31
+117,2570,Athletic Centre Bike Racks ,"Stearn Drive, McMaster University, Hamilton",,No,5,24,86,-79.9157457053661,43.2647150978413,2017-07-31
+118,2868,King Street Dundas,"6-8 Main Street, Hamilton",,No,10,24,86,-79.9537539482117,43.2659563254336,2017-07-31
+119,2869,Cootes Drive Dundas,"11 Court Street, Hamilton",,No,5,24,86,-79.9476599693298,43.2654741914965,2017-07-31
+120,2916,Sherman at Barton - ERI02,"141-147 Sherman Avenue North, Hamilton",,No,7,24,86,-79.8362443596125,43.2563506050538,2017-07-31
+121,2917,Barton at Lottridge - ERI03,"779-781 Barton Street East, Hamilton",,No,7,24,86,-79.8314452171326,43.2552894386678,2017-07-31
+122,2918,Barton and Belview - ERI05,"954 Barton Street East, Hamilton",,No,7,24,86,-79.8221721500158,43.2529105009964,2017-07-31
+123,2919,Barton at Ottawa - ERI06,"437-443 Ottawa Street North, Hamilton",,No,7,24,86,-79.8160211741924,43.2514780437277,2017-07-31
+124,2920,Ottawa at Dunsmure - ERI07,"52 Ottawa Street North, Hamilton",,No,7,24,86,-79.8190721869469,43.24398549431,2017-07-31
+125,2921,Maple at Rothsay - ERI08,"394 Maple Avenue, Hamilton",,No,7,24,86,-79.8250025510788,43.2421627333438,2017-07-31
+126,2922,King at Dunsmure - ERI09,"304 Dunsmure Road, Hamilton",,No,7,24,86,-79.8268599808216,43.246343826465,2017-07-31
+127,2923,Dunsmure at Sherman - ERI10,"44 Dunsmure Road, Hamilton",,No,7,24,86,-79.8388883471489,43.2494327410807,2017-07-31
+128,2924,Gage at Cannon - ERI11,"75-77 Gage Avenue North, Hamilton",,No,7,24,86,-79.8274084925652,43.2511264442989,2017-07-31
+129,2925,Belview at Cannon - ERI12,"135 Belview Avenue, Hamilton",,No,7,24,86,-79.8235702514648,43.2492675588381,2017-07-31
+130,2926,Westinghouse at Barton - ERI13,"9 Westinghouse Avenue, Hamilton",,No,7,24,86,-79.8424060642719,43.2583192006676,2017-07-31

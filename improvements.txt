@@ -1,0 +1,8 @@
+- Added light blue-ish background colour
+- Map takes up entire viewport width when the info window is not displayed
+- Added help section with a map legend at the bottom of the page
+- Modified styling and added borders around map, location info, and help
+- Map automatically updates when changing the Racks counter without pressing Search button
+- You can manually enter the number of Racks without using the number wheel
+- Changed colouring of SoBi hub pins based on how many racks are available at the location
+- Displayed number of racks within the SoBi hub pins
