@@ -5,112 +5,115 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABjNtIFN8YQ3Fxs0JsPP6XVczHIDk623Q&libraries=places,geometry"></script>
-    <!--<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>-->
     <script type="text/javascript" src="hubs.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <!--AIzaSyABjNtIFN8YQ3Fxs0JsPP6XVczHIDk623Q -->
-    <!-- AIzaSyCzJIZBUAYgpWfSAOCwFznJV1VfAZnaml0 -->
     <style type="text/css">
         body {
             background-color: #ccf5ff;
         }
-
-        form {
+        #sobiForm {
             margin-top: 1em;
         }
-
         h1 {
             text-align: center;
         }
-
         label {
             padding: 0;
         }
-
-        #map{
+        #map {
             height: 650px;
-            background:#6699cc;
+            background: #6699cc;
         }
-
-        #right-panel{
+        #right-panel {
             height: 650px;
             background-color: white;
             overflow-y: scroll;
+            display: none;
         }
-
-        #infoWindow{
+        #infoWindow {
             height: 500px;
             background: lightgreen;
             display: none;
         }
-
-        #mapsLink, .iwMapsLink{
+        #mapsLink, .iwMapsLink {
             font-style: italic;
         }
-
-        #linkContainer{
+        #linkContainer {
             text-align: center;
         }
-
-        .title{
+        .title {
             padding-top: 10px;
             font-size: 24pt;
             text-align: center;
         }
-
-        .subtitle{
+        .subtitle {
             font-size: 18pt;
             text-align: center;
         }
-
         #help {
             background-color: skyblue;
             width: 100vw;
             border: 3px solid blue;
         }
-
         .info {
             font-weight: bold;
         }
-
-        #minRacks{
+        #minRacks {
             user-select: none;
         }
-
-        .topcorner{
+        .topcorner {
             position: absolute;
             top: 5px;
             right: 5px;
         }
-
         #back {
             width: 50px;
             height: 50px;
             margin-left: 10px;
             margin-bottom: 10px;
             cursor: pointer;
-            visibility: hidden;
-        }
-
-        #right-panel {
-            visibility: hidden;
-        }
-
-        .adp-warnbox, .adp-legal{
             display: none;
         }
-
+        .adp-warnbox, .adp-legal {
+            display: none;
+        }
         .adp-marker2 {
             content: url("https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FE7569");
         }
-
         #right-panel-waypoints .adp-text, #right-panel-waypoints .adp-marker2 {
             display: none;
         }
-
-        .form-signin{
+        #signInForm {
             display: none;
         }
+        #signOutLink, #loggedUser,
+        #signInMessage, #siteInfo {
+            display: none;
+        }
+        .btn-container {
+            padding: 0;
+        }
+        .user-options {
+            display: none;
+        }
+        #save-trips-container, #trip-name-group, #friend-username-group,
+        #saveTripEditButton, #cancelTripEditButton, #location-group, 
+		#location-name-group, #location-address-group,
+		#saveLocationEditButton, #cancelLocationEditButton		{
+            display: none;
+        }
+        .table {
+            display: none;
+        }
+        .table th, .table td {
+            background-color: white;
+            text-align: center;
+        }
+		
+		caption {
+			text-align: center;
+			font-weight: bold;
+		}
     </style>
 
     <meta charset="utf-8">
@@ -126,36 +129,66 @@
         var openedInfoWindow;
         var originAutocomplete;
         var destinationAutocomplete;
+		var locationAutocomplete;
         var startMarker;
         var destinationMarker;
-
-        $(document).ready(function(){
+        var isLoggedIn = false;
+        var isTripOpen = false;
+        var startLocation;
+        var destinationLocation;
+        var minimumRacks;
+        var trips;
+        var friends;
+		var locations;
+        var startPlaceId;
+        var destPlaceId;
+        var service;
+		var locationMarker;
+		
+        $(document).ready(function () {
+			$("#start").html("");
+			$("#siteInfo").css("display", "block");
+			$("#siteInfoMessage").html("This project is currently in beta. You may experience minor issues with this application.");
+		
+            $.ajax({
+                url: "php/usersession.php",
+                type: "post",
+                error: function () {
+                },
+                success: function (result) {
+                    if (!result == "") {
+                        $("#signUpLink").css("display", "none");
+                        $("#signInLink").css("display", "none");
+                        $("#signOutLink").css("display", "block");
+                        $("#loggedUser").css("display", "block");
+                        $("#loggedUser").html("<strong>" + result + "</strong>");
+                        displayUserOptions();
+                        isLoggedIn = true;
+                    }
+                }
+            });
             navigator.geolocation.getCurrentPosition(
-                function(position){
+                function (position) {
                     latitude = position.coords.latitude;
                     longitude = position.coords.longitude;
-                    var coords = {lat: latitude, lng: longitude};
+                    var coords = { lat: latitude, lng: longitude };
                     map = new google.maps.Map(document.getElementById('map'), {
                         zoom: 11,
                         center: coords
                     });
-
                     var mapsURL = "https://www.google.com/maps?q=" + encodeURI(latitude + "," + longitude);
-
                     var marker = new google.maps.Marker({
                         position: coords,
                         map: map
                     });
-
                     var infowindow = new google.maps.InfoWindow({
                         content: "<p>Current Location</p>" +
-                        "<a class='iwMapsLink' target='_blank' " + "href='" + mapsURL + "'>" +
-                        "Open in Google Maps" +
-                        "</a>"
+                            "<a class='iwMapsLink' target='_blank' " + "href='" + mapsURL + "'>" +
+                            "Open in Google Maps" +
+                            "</a>"
                     });
-
-                    marker.addListener('click', function() {
-                        if (openedInfoWindow != undefined){
+                    marker.addListener('click', function () {
+                        if (openedInfoWindow != undefined) {
                             openedInfoWindow.close();
                         }
                         openedInfoWindow = infowindow;
@@ -163,14 +196,11 @@
                     });
                     pinHubs(map);
                     new AutocompleteDirectionsHandler(map);
-                    //var startLatLng = new google.maps.LatLng({lat: 43.2583192006676, lng: -79.8424060642719});
-                    //var destLatLng = new google.maps.LatLng({lat: 43.2551792486624, lng: -79.8614431097373});
-                    //console.log(google.maps.geometry.spherical.computeDistanceBetween(startLatLng,destLatLng));
                 },
-                function(error) {
+                function (error) {
                     latitude = 43.255203;
                     longitude = -79.843826;
-                    var coords = {lat: latitude, lng: longitude};
+                    var coords = { lat: latitude, lng: longitude };
                     map = new google.maps.Map(document.getElementById('map'), {
                         zoom: 11,
                         center: coords
@@ -179,120 +209,887 @@
                     new AutocompleteDirectionsHandler(map);
                 }
             );
-
-            $("form").submit(function(){
-                return false;
-            });
-
-            $("#back").click(function(){
+			
+			$("input").focus(function(){
+				$("#siteInfo").css("display", "none");
+				$("#siteInfoMessage").html("");
+			});
+			
+            $("#back").click(function () {
                 location.reload();
             });
-
-            $("#signIn").click(function(){
-                /*$.ajax({
-                    url: "backend.php",
-                    type: "post",
-                    error: function(){
-                        alert("something bad happened");
-                     },
-                    success: function(result) {
-                        alert(result);
-                    }
-                });*/
-
-                $(".form-signin").css("display", "block");
+            $("#signInLink").click(function () {
+                $("#signInForm").css("display", "block");
+                $("#username").focus();
+				return false;
             });
-
-            $("#signInButton").click(function(){
+            $(".close").click(function () {
+                $(this).parent().css("display", "none");
+            });
+            $("a, button").click(function () {
+                $(".alert").css("display", "none");
+            });
+            $("#saveToTripsButton").click(function () {
                 $.ajax({
-                    url: "php/signin.php",
+                    url: "php/addtrip.php",
                     data: {
-                        username: $("#username").val().trim(),
-                        password: $("#password").val().trim(),
+                        start: startLocation,
+                        destination: destinationLocation,
+                        minRacks: minimumRacks,
+                        tripName: $("#tripName").val().trim()
                     },
                     type: "post",
-                    error: function(){
-                        alert("something bad happened");
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
                     },
-                    success: function(result) {
-                        alert(result);
+                    success: function (result) {
+                        $("#myTripsButton").trigger("click");
+                        $("#siteInfo").css("display", "block");
+                        $("#siteInfoMessage").html(result);
                     }
                 });
             });
-
-            $("#minRacks").change(function(){
+			
+			$("#addLocationButton").click(function () {
+				var loc = $("#locationAddress").val();
+				if (!loc.endsWith("ON, Canada") && loc.trim().length > 0){
+					$("#siteInfo").css("display", "block");
+					$("#siteInfoMessage").html("Locations must be in Hamilton, Dundas or Stoney Creek.");
+					$("#locationAddress").val("");
+                    return;
+				}
+				if (!loc.includes("Hamilton") && !loc.includes("Stoney Creek") && 
+						!loc.includes("Dundas") && loc.trim().length > 0){
+					$("#siteInfo").css("display", "block");
+					$("#siteInfoMessage").html("Locations must be in Hamilton, Dundas or Stoney Creek.");
+					$("#locationAddress").val("");
+                    return;
+				}
+			
+                $.ajax({
+                    url: "php/addlocation.php",
+                    data: {
+                        locationName: $("#locationName").val().trim(),
+						locationAddress: $("#locationAddress").val().trim()
+                    },
+                    type: "post",
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#locationsButton").trigger("click");
+                        $("#siteInfo").css("display", "block");
+                        $("#siteInfoMessage").html("Location successfully added.");
+                    }
+                });
+            });
+			
+			$(document.body).on('click', '.addToTripsLink', function () {
+				var tripId = parseInt($(this).attr("href").replace("#", ""));
+			
+				$.ajax({
+                    url: "php/addtotrips.php",
+                    data: {
+                        tripid : tripId
+                    },
+                    type: "post",
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                       $("#sharedTripsButton").trigger("click");
+                       $("#siteInfo").css("display", "block");
+                       $("#siteInfoMessage").html(result);
+                    }
+                });
+			});
+			
+            $("#myTripsButton").click(function () {
+                var tripTable = $("#myTripsTable tbody");
+                tripTable.html("");
+				
+                $.ajax({
+                    url: "php/gettrips.php",
+                    type: "post",
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#myTripsTable").css("display", "table");
+                        $(".user-options").css("display", "none");
+                        $("#save-trips-container").css("display", "block");
+						$("#saveTripEditButton").css("display", "none");
+						$("#cancelTripEditButton").css("display", "none");
+						$("#saveToTripsButton").css("display", "block");
+                        $("#trip-name-group").css("display", "block");
+                        $("#back").css("display", "block");
+                        trips = JSON.parse(result);
+                        for (var i = 0; i < trips.length; i++) {
+                            var tripId = trips[i][4];
+                            tripTable.append(
+                                "<tr>" +
+                                "<td>" +
+                                trips[i][0] +
+                                "</td>" +
+                                "<td>" +
+                                trips[i][1] +
+                                "</td>" +
+                                "<td>" +
+                                trips[i][2] +
+                                "</td>" +
+                                "<td>" +
+                                trips[i][3] +
+                                "</td>" +
+                                "<td style='min-width: 100px;'>" +
+                                "<div><a class='openTripLink' href='#" + tripId + "'>Open Trip</a></div>" +
+                                "<div><a class='shareTripLink' href='#" + tripId + "'>Share Trip</a></div>" +
+                                "<div><a class='editTripLink' href='#" + tripId + "'>Edit</a></div>" +
+                                "<div><a class='deleteTripLink' href='#" + tripId + "'>Delete</a></div>" +
+                                "</td>" +
+                                "</tr>"
+                            );
+                        }
+                    }
+                });
+            });
+			
+			$("#locationsButton").click(function () {
+				var locationTable = $("#myLocationsTable tbody");
+                locationTable.html("");
+				
+				$.ajax({
+					url: "php/getlocations.php",
+                    type: "post",
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+					success: function (result) {
+						$("#myLocationsTable").css("display", "table");
+                        $(".user-options").css("display", "none");
+						$("#location-group").css("display", "block");
+						$("#location-name-group").css("display", "block");
+						$("#location-address-group").css("display", "block");
+						$("#start-group").css("display", "none");
+						$("#destination-group").css("display", "none");
+						$("#saveLocationEditButton").css("display", "none");
+						$("#cancelLocationEditButton").css("display", "none");
+						$("#addLocationButton").css("display", "block");
+						$("#back").css("display", "block");
+						
+						locations = JSON.parse(result);
+						
+						for (var i = 0; i < locations.length; i++) {
+							var locationId = locations[i][2];
+							
+							locationTable.append(
+                                "<tr>" +
+                                "<td>" +
+                                locations[i][0] +
+                                "</td>" +
+                                "<td>" +
+                                locations[i][1] +
+                                "</td>" +
+                                "<td style='min-width: 100px;'>" +
+                                "<div><a class='openLocationLink' href='#" + locationId + "'>Open Location</a></div>" +
+                                "<div><a class='editLocationLink' href='#" + locationId + "'>Edit</a></div>" +
+                                "<div><a class='deleteLocationLink' href='#" + locationId + "'>Delete</a></div>" +
+                                "</td>" +
+                                "</tr>"
+                            );
+						}
+					}
+				});
+			});
+			
+			$("#sharedTripsButton").click(function () {
+                var tripTable = $("#myTripsTable tbody");
+                tripTable.html("");
+                $.ajax({
+                    url: "php/getsharedtrips.php",
+                    type: "post",
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#myTripsTable").css("display", "table");
+                        $(".user-options").css("display", "none");
+                        $("#back").css("display", "block");
+                        trips = JSON.parse(result);
+                        for (var i = 0; i < trips.length; i++) {
+                            var tripId = trips[i][4];
+                            tripTable.append(
+                                "<tr>" +
+                                "<td>" +
+                                trips[i][0] +
+                                "</td>" +
+                                "<td>" +
+                                trips[i][1] +
+                                "</td>" +
+                                "<td>" +
+                                trips[i][2] +
+                                "</td>" +
+                                "<td>" +
+                                trips[i][3] +
+                                "</td>" +
+                                "<td style='min-width: 100px;'>" +
+                                "<div><a class='addToTripsLink' href='#" + tripId + "'>Add to My Trips</a></div>" +
+                                "<div><a class='deleteSharedTripLink' href='#" + tripId + "'>Delete</a></div>" +
+                                "</td>" +
+                                "</tr>"
+                            );
+                        }
+                    }
+                });
+            });
+			
+            $("#friendsButton").click(function () {
+                var friendTable = $("#myFriendsTable tbody");
+                friendTable.html("");
+				var requestsTable = $("#myFriendRequestsTable tbody");
+                requestsTable.html("");
+				
+				$("#start-group").css("display", "none");
+				$("#destination-group").css("display", "none");
+				$("#racks-group").css("display", "none");
+				$("#friend-username-group").css("display", "block");
+				
+                $.ajax({
+                    url: "php/getfriends.php",
+                    type: "post",
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#myFriendsTable").css("display", "table");
+						$("#myFriendRequestsTable").css("display", "table");
+                        $(".user-options").css("display", "none");
+                        $("#back").css("display", "block");
+                        friends = JSON.parse(result);
+                        for (var i = 0; i < friends.length; i++) {
+                            var status;
+							var friendActions = "";
+							var friendId = friends[i][2];
+							if (friends[i][1] == "0"){
+								status = "Pending";
+							} else if (friends[i][1] == "1"){
+								status = "Accepted";
+								friendActions = 
+                                "<div><a class='deleteFriendLink' href='#" + friendId + "'>Delete Friend</a></div>";
+							}
+							
+                            friendTable.append(
+                                "<tr>" +
+                                "<td>" +
+                                friends[i][0] +
+                                "</td>" +
+                                "<td>" +
+                                status +
+                                "</td>" +
+                                "<td>" +
+								friendActions +
+                                "</td>" +
+                                "</tr>"
+                            );
+                        }
+                    }
+                });
+				
+				$.ajax({
+                    url: "php/getfriendrequests.php",
+                    type: "post",
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#myFriendsTable").css("display", "table");
+						$("#myFriendRequestsTable").css("display", "table");
+                        $(".user-options").css("display", "none");
+                        $("#back").css("display", "block");
+                        friends = JSON.parse(result);
+                        for (var i = 0; i < friends.length; i++) {
+							var friendId = friends[i][1];
+                            requestsTable.append(
+                                "<tr>" +
+                                "<td>" +
+                                friends[i][0] +
+                                "</td>" +
+                                "<td>" +
+                                "<div><a class='acceptRequestLink' href='#" + friendId + "'>Accept</a></div>" +
+                                "<div><a class='declineRequestLink' href='#" + friendId + "'>Decline</a></div>" +
+                                "</td>" +
+                                "</tr>"
+                            );
+                        }
+                    }
+                });
+            });
+			
+			$("#addFriendButton").click(function(){
+				$.ajax({
+					url: "php/addfriend.php",
+                    type: "post",
+					data: {
+						friendname: $("#friendUsername").val()
+					},
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+					success: function (result) {
+						$("#friendsButton").trigger("click");
+						$("#siteInfo").css("display", "block");
+                        $("#siteInfoMessage").html(result);
+					}
+				});
+			});
+			
+            $(document.body).on('click', '.openTripLink', function () {
+                var tripId = parseInt($(this).attr("href").replace("#", ""));
+                var tripData;
+                for (var i = 0; i < trips.length; i++) {
+                    if (trips[i][4] == tripId) {
+                        tripData = trips[i];
+                        break;
+                    }
+                }
+                if (tripData) {
+                    $("#start").val(tripData[1]);
+                    $("#destination").val(tripData[2]);
+                    $("#minRacks").val(parseInt(tripData[3]));
+                    var geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ 'address': tripData[1] }, function (results, status) {
+                        if (status === 'OK') {
+                            startPlaceId = results[0].place_id;
+                            service.getDetails({
+                                placeId: startPlaceId
+                            }, function (place, status) {
+                                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                    originAutocomplete.set("place", place);
+                                }
+                            });
+                        }
+                    });
+                    geocoder.geocode({ 'address': tripData[2] }, function (results, status) {
+                        if (status === 'OK') {
+                            destPlaceId = results[0].place_id;
+                            service.getDetails({
+                                placeId: destPlaceId
+                            }, function (place, status) {
+                                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                    destinationAutocomplete.set("place", place);
+                                }
+                            });
+                        }
+                    });
+                }
+				
+				return false;
+            });
+			
+			$(document.body).on('click', '.openLocationLink', function () {
+				var locationId = parseInt($(this).attr("href").replace("#", ""));
+                var locationData;
+                for (var i = 0; i < locations.length; i++) {
+                    if (locations[i][2] == locationId) {
+                        locationData = locations[i];
+                        break;
+                    }
+                }
+                if (locationData) {
+                    $("#locationName").val(locationData[0]);
+                    $("#locationAddress").val(locationData[1]);
+					
+					if (locationMarker){
+						locationMarker.setMap(null);
+					}
+					
+					var geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ 'address': locationData[1] }, function (results, status) {
+                        if (status === 'OK') {
+                            var lat = results[0].geometry.location.lat();
+                            var lng = results[0].geometry.location.lng();
+							
+							locationMarker = new google.maps.Marker({
+								position: { lat: lat, lng: lng },
+								map: map,
+								icon: ('https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=L|ff6600')
+							});
+							
+							map.setZoom(15);
+							map.panTo(locationMarker.position);
+                        }
+                    });
+                }
+				
+				return false;
+			});
+			
+			$(document.body).on('click', '.shareTripLink', function () {
+				var tripId = parseInt($(this).attr("href").replace("#", ""));
+                var tripData;
+                for (var i = 0; i < trips.length; i++) {
+                    if (trips[i][4] == tripId) {
+                        tripData = trips[i];
+                        break;
+                    }
+                }
+                if (tripData) {
+					$("#tripName").val(tripData[0]);
+					$("#start").val(tripData[1]);
+                    $("#destination").val(tripData[2]);
+                    $("#minRacks").val(parseInt(tripData[3]));
+					
+					$("#tripName").attr("disabled", "disabled");
+					$("#start").attr("disabled", "disabled");
+					$("#destination").attr("disabled", "disabled");
+					$("#minRacks").attr("disabled", "disabled");
+					
+					$("#myTripsTable").css("display", "none");
+					$("#saveToTripsButton").css("display", "none");
+					$("#friendTripTable").css("display", "table");
+					
+					$.ajax({
+						url: "php/getfriends.php",
+						type: "post",
+						error: function (xmlHttpRequest, textStatus, errorThrown) {
+                            sendError(errorThrown);
+						},
+						success: function (result) {
+							friends = JSON.parse(result);
+							var friendTable = $("#friendTripTable tbody");
+							friendTable.html("");
+							for (var i = 0; i < friends.length; i++) {
+								var status;
+								var friendId = friends[i][2];
+								if (friends[i][1] == "1"){
+									friendTable.append(
+										"<tr>" +
+										"<td>" +
+										friends[i][0] +
+										"</td>" +
+										"<td>" +
+										"<div><a class='shareLink' href='#" + friendId + "' data-trip='" + tripId + "'>Share</a></div>" +
+										"</td>" +
+										"</tr>"
+									);
+								}
+							}
+						}
+					});
+				}
+				
+				return false;
+			});
+			
+			$(document.body).on('click', '.shareLink', function () {
+				var friendId = parseInt($(this).attr("href").replace("#", ""));
+				var tripId = parseInt($(this).attr("data-trip"));
+			
+				$.ajax({
+					url: "php/sharetrip.php",
+                    type: "post",
+					data: {
+						friendid: friendId,
+						tripid: tripId
+					},
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+					success: function (result) {
+						$("#siteInfo").css("display", "block");
+                        $("#siteInfoMessage").html(result);
+					}
+				});
+				
+				return false;
+			});
+			
+            $(document.body).on('click', '.editTripLink', function () {
+                var tripId = parseInt($(this).attr("href").replace("#", ""));
+                var tripData;
+                for (var i = 0; i < trips.length; i++) {
+                    if (trips[i][4] == tripId) {
+                        tripData = trips[i];
+                        break;
+                    }
+                }
+                if (tripData) {
+                    $("#tripName").val(tripData[0]);
+                    $("#start").val(tripData[1]);
+                    $("#destination").val(tripData[2]);
+                    $("#minRacks").val(parseInt(tripData[3]));
+                    $("#saveToTripsButton").css("display", "none");
+                    $("#saveTripEditButton").css("display", "block");
+                    $("#saveTripEditButton").attr("data-trip", tripId);
+                    $("#cancelTripEditButton").css("display", "block");
+                }
+				
+				return false;
+            });
+			
+			$(document.body).on('click', '.editLocationLink', function () {
+                var locationId = parseInt($(this).attr("href").replace("#", ""));
+                var locationData;
+                for (var i = 0; i < locations.length; i++) {
+                    if (locations[i][2] == locationId) {
+                        locationData = locations[i];
+                        break;
+                    }
+                }
+                if (locationData) {
+                    $("#locationName").val(locationData[0]);
+                    $("#locationAddress").val(locationData[1]);
+                    $("#addLocationButton").css("display", "none");
+                    $("#saveLocationEditButton").css("display", "block");
+                    $("#saveLocationEditButton").attr("data-location", locationId);
+                    $("#cancelLocationEditButton").css("display", "block");
+                }
+				
+				return false;
+            });
+			
+            $(document.body).on('click', '.deleteTripLink', function () {
+                var tripId = parseInt($(this).attr("href").replace("#", ""));
+                $.ajax({
+                    url: "php/deletetrip.php",
+                    type: "post",
+                    data: {
+                        tripid: tripId
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#myTripsButton").trigger("click");
+                        $("#siteInfo").css("display", "block");
+                        $("#siteInfoMessage").html(result);
+                    }
+                });
+				
+				return false;
+            });
+			
+			$(document.body).on('click', '.deleteSharedTripLink', function () {
+                var tripId = parseInt($(this).attr("href").replace("#", ""));
+                $.ajax({
+                    url: "php/deletesharedtrip.php",
+                    type: "post",
+                    data: {
+                        tripid: tripId
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#sharedTripsButton").trigger("click");
+                        $("#siteInfo").css("display", "block");
+                        $("#siteInfoMessage").html(result);
+                    }
+                });
+				
+				return false;
+            });
+			
+			$(document.body).on('click', '.acceptRequestLink', function () {
+                var friendId = parseInt($(this).attr("href").replace("#", ""));
+				
+				$.ajax({
+                    url: "php/acceptfriend.php",
+                    type: "post",
+                    data: {
+                        friendid: friendId
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#friendsButton").trigger("click");
+                        $("#siteInfo").css("display", "block");
+                        $("#siteInfoMessage").html(result);
+                        
+                    }
+                });
+				
+				return false;
+			});
+			
+			$(document.body).on('click', '.declineRequestLink', function () {
+                var friendId = parseInt($(this).attr("href").replace("#", ""));
+				
+				$.ajax({
+                    url: "php/declinefriend.php",
+                    type: "post",
+                    data: {
+                        friendid: friendId
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#friendsButton").trigger("click");
+                        $("#siteInfo").css("display", "block");
+                        $("#siteInfoMessage").html(result);
+                        
+                    }
+                });
+				
+				return false;
+			});
+			
+			$(document.body).on('click', '.deleteFriendLink', function () {
+                var friendId = parseInt($(this).attr("href").replace("#", ""));
+				
+				$.ajax({
+                    url: "php/deletefriend.php",
+                    type: "post",
+                    data: {
+                        friendid: friendId
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#friendsButton").trigger("click");
+                        $("#siteInfo").css("display", "block");
+                        $("#siteInfoMessage").html(result);
+                        
+                    }
+                });
+				
+				return false;
+			});
+			
+			$(document.body).on('click', '.deleteLocationLink', function () {
+                var locationId = parseInt($(this).attr("href").replace("#", ""));
+				
+				$.ajax({
+                    url: "php/deletelocation.php",
+                    type: "post",
+                    data: {
+                        locationid: locationId
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        $("#locationsButton").trigger("click");
+                        $("#siteInfo").css("display", "block");
+                        $("#siteInfoMessage").html(result);
+                        
+                    }
+                });
+				
+				return false;
+			});
+			
+            $("#saveTripEditButton").click(function () {
+                var tripId = parseInt($(this).attr("data-trip"));
+                var start = $("#start").val();
+                var destination = $("#destination").val();
+                var racks = parseInt($("#minRacks").val());
+                var tripName = $("#tripName").val().trim();
+                $.ajax({
+                    url: "php/edittrip.php",
+                    type: "post",
+                    data: {
+                        tripid: tripId,
+                        start: start,
+                        destination: destination,
+                        minRacks: racks,
+                        tripName: tripName
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        result = JSON.parse(result);
+                        if (result[0] == -1) {
+                        } else if (result[0] == 0) {
+                        } else if (result[0] == 1) {
+                            $("#myTripsButton").trigger("click");
+                            $("#siteInfo").css("display", "block");
+                            $("#siteInfoMessage").html("Trip saved successfully.");
+                        }
+                    }
+                });
+            });
+			
+			$("#saveLocationEditButton").click(function () {
+                var locationId = parseInt($(this).attr("data-location"));
+                var locationName = $("#locationName").val().trim();
+				var locationAddress = $("#locationAddress").val().trim();
+                $.ajax({
+                    url: "php/editlocation.php",
+                    type: "post",
+                    data: {
+                        locationid: locationId,
+						locationName: locationName,
+						locationAddress: locationAddress
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        result = JSON.parse(result);
+                        if (result[0] == -1) {
+                        } else if (result[0] == 0) {
+                        } else if (result[0] == 1) {
+                            $("#locationsButton").trigger("click");
+                            $("#siteInfo").css("display", "block");
+                            $("#siteInfoMessage").html("Location saved successfully.");
+                        }
+                    }
+                });
+            });
+			
+			$("#cancelTripEditButton").click(function() {
+				$(this).css("display", "none");
+				$("#saveTripEditButton").css("display", "none");
+				$("#saveToTripsButton").css("display", "block");
+			});
+			
+			$("#cancelLocationEditButton").click(function() {
+				$(this).css("display", "none");
+				$("#saveLocationEditButton").css("display", "none");
+				$("#addLocationButton").css("display", "block");
+			});
+			
+            $("#signOutLink").click(function () {
+                $.ajax({
+                    url: "php/signout.php",
+                    type: "post",
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        location.reload();
+                    }
+                });
+            });
+            $("#signInCancel").click(function () {
+                $("#signInForm").css("display", "none");
+                $("#username").val("");
+                $("#password").val("");
+            });
+            $("#signInForm").submit(function () {
+                $.ajax({
+                    url: "php/signin.php",
+                    data: {
+                        username: $("#username").val(),
+                        password: $("#password").val(),
+                    },
+                    type: "post",
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        sendError(errorThrown);
+                    },
+                    success: function (result) {
+                        result = JSON.parse(result);
+                        if (result[0] == -1) {
+                            $("#signInMessage").css("display", "block");
+                            $("#signInMessage").html("An error occurred. Unable to sign in.");
+                        } else if (result[0] == 0) {
+                            $("#signInMessage").css("display", "block");
+                            $("#signInMessage").html("Username or password is incorrect.");
+                        } else if (result[0] == 1) {
+                            $("#signInMessage").css("display", "none");
+                            $("#signInMessage").html("");
+                            $("#username").val("");
+                            $("#password").val("");
+                            $("#loggedUser").css("display", "block");
+                            $("#loggedUser").html("<strong>" + result[1] + "</strong>");
+                            $("#signInForm").css("display", "none");
+                            $("#signUpLink").css("display", "none");
+                            $("#signInLink").css("display", "none");
+                            $("#signOutLink").css("display", "block");
+                            $("#siteInfo").css("display", "block");
+                            $("#siteInfoMessage").html("Logged in successfully.");
+                            isLoggedIn = true;
+                            if (isTripOpen) {
+                                $("#save-trips-container").css("display", "block");
+                                $(".user-options").css("display", "none");
+                                $("#trip-name-group").css("display", "block");
+                            } else {
+                                $("#save-trips-container").css("display", "none");
+                                $(".user-options").css("display", "block");
+                                $("#trip-name-group").css("display", "none");
+                            }
+                        }
+                    }
+                });
+                return false;
+            });
+            $("#minRacks").change(function () {
                 var minRacks = parseInt($(this).val());
+				
+				if (isNaN(minRacks) || minRacks < 5){
+					minRacks = 5;
+				} else if (minRacks > 25) {
+					minRacks = 25;
+				}
+				
+				$(this).val(minRacks);
+				
                 hideMarkers(minRacks);
                 if ($("#start").val().trim() != ""
-                    && $("#destination").val().trim() != ""){
+                    && $("#destination").val().trim() != "") {
                     google.maps.event.trigger(originAutocomplete, 'place_changed');
-                    //google.maps.event.trigger(destinationAutocomplete, 'place_changed');
                 }
             });
         });
-
-        function pinHubs(map){
-            for (var i = 0; i < hubs.length; i++){
+        function sendError(error){
+            $.ajax({
+                url: "php/recordError.php",
+                type: "post",
+                data: {
+                    error: error
+                },
+                error: function () {
+                    
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+        }
+        function pinHubs(map) {
+            for (var i = 0; i < hubs.length; i++) {
                 var hub = hubs[i];
                 var colour;
-                if (hub.racks >= 5 && hub.racks <= 9){
+                if (hub.racks >= 5 && hub.racks <= 9) {
                     colour = "b3d1ff";
-                } else if (hub.racks >= 10 && hub.racks <= 14){
+                } else if (hub.racks >= 10 && hub.racks <= 14) {
                     colour = "80b3ff";
-                } else if (hub.racks >= 15 && hub.racks <= 19){
+                } else if (hub.racks >= 15 && hub.racks <= 19) {
                     colour = "3385ff";
                 } else {
                     colour = "0052cc";
                 }
-
                 var marker = new google.maps.Marker({
-                    position: {lat: parseFloat(hub.latitude), lng: parseFloat(hub.longitude)},
+                    position: { lat: parseFloat(hub.latitude), lng: parseFloat(hub.longitude) },
                     map: map,
                     racks: hub.racks,
                     icon: ('https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + hub.racks + '|' + colour)
                 });
-
-                google.maps.event.addListener(marker, 'click', (function(marker, hubs) {
-                    return function() {
+                google.maps.event.addListener(marker, 'click', (function (marker, hubs) {
+                    return function () {
                         var mapsURL = "https://www.google.com/maps?q=" + encodeURI(hubs.address);
-
                         var infowindow = new google.maps.InfoWindow({
                             content: "<p class='hubName'></p>" +
-                            "<a class='iwMapsLink' target='_blank'>" +
-                            "Open in Google Maps" +
-                            "</a>"
+                                "<a class='iwMapsLink' target='_blank'>" +
+                                "Open in Google Maps" +
+                                "</a>"
                         });
                         infowindow.open(map, marker);
-                        if (openedInfoWindow != undefined){
+                        if (openedInfoWindow != undefined) {
                             openedInfoWindow.close();
                         }
                         openedInfoWindow = infowindow;
-
-                        /*$("#map").width("100%");
-                        $("#infoWindow").css("display","block");
-                        $("#name").html(hubs.name);
-                        $("#address").html(hubs.address);
-                        $("#latitude").html(hubs.latitude);
-                        $("#longitude").html(hubs.longitude);
-                        $("#racks").html(hubs.racks);
-                        $("#mapsLink").attr("href", mapsURL);*/
                         $(".iwMapsLink").attr("href", mapsURL);
                         $(".hubName").html(hubs.name);
-
-                        //map.setCenter(hubs.latitude, hubs.longitude);
-                        //map.setZoom(16);
-
-                        /*if ($(window).width() < 768){
-                            $('html, body').animate({
-                                scrollTop: $("#infoWindow").offset().top
-                            }, 1000 );
-                        }*/
                     }
                 })(marker, hubs[i]));
                 hubMarkers.push(marker);
             }
         }
-
         // AutocompleteDirectionsHandler retrieved from :
         //https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete-directions
         function AutocompleteDirectionsHandler(map) {
@@ -302,46 +1099,64 @@
             this.travelMode = 'WALKING';
             var originInput = document.getElementById('start');
             var destinationInput = document.getElementById('destination');
-            //var modeSelector = document.getElementById('mode-selector');
+			var locationInput = document.getElementById('locationAddress');
             this.directionsService = new google.maps.DirectionsService;
-            this.directionsDisplay = new google.maps.DirectionsRenderer({suppressMarkers: true, polylineOptions: {strokeColor: "blue"}, preserveViewport: true});
-            this.directionsDisplayWaypoints = new google.maps.DirectionsRenderer({suppressMarkers: true, polylineOptions: {strokeColor: "red"}, preserveViewport: true});
-            this.directionsDisplayEnd = new google.maps.DirectionsRenderer({suppressMarkers: true, polylineOptions: {strokeColor: "green"}, preserveViewport: true});
+            this.directionsDisplay = new google.maps.DirectionsRenderer({ suppressMarkers: true, polylineOptions: { strokeColor: "blue" }, preserveViewport: true, suppressBicyclingLayer: true });
+            this.directionsDisplayWaypoints = new google.maps.DirectionsRenderer({ suppressMarkers: true, polylineOptions: { strokeColor: "red" }, preserveViewport: true, suppressBicyclingLayer: true });
+            this.directionsDisplayEnd = new google.maps.DirectionsRenderer({ suppressMarkers: true, polylineOptions: { strokeColor: "green" }, preserveViewport: true, suppressBicyclingLayer: true });
             this.directionsDisplay.setMap(map);
             this.directionsDisplayWaypoints.setMap(map);
             this.directionsDisplayEnd.setMap(map);
-
+            service = new google.maps.places.PlacesService(map);
             this.directionsDisplay.setPanel(document.getElementById('right-panel-start'));
             this.directionsDisplayWaypoints.setPanel(document.getElementById('right-panel-waypoints'));
             this.directionsDisplayEnd.setPanel(document.getElementById('right-panel-end'));
-
             originAutocomplete = new google.maps.places.Autocomplete(
-                originInput, {placeIdOnly: false});
+                originInput, { placeIdOnly: false });
             destinationAutocomplete = new google.maps.places.Autocomplete(
-                destinationInput, {placeIdOnly: false});
-
-            //this.setupClickListener('changemode-walking', 'WALKING');
-            //this.setupClickListener('changemode-transit', 'TRANSIT');
-            //this.setupClickListener('changemode-driving', 'DRIVING');
-
+                destinationInput, { placeIdOnly: false });
+			locationAutocomplete = new google.maps.places.Autocomplete(
+                locationInput, { placeIdOnly: false });
+			locationAutocomplete.bindTo('bounds', this.map);
             this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
             this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
-
-            //this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
-            //this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
-            //this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(modeSelector);
         }
-
-        AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(autocomplete, mode) {
+        AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function (autocomplete, mode) {
             var me = this;
             autocomplete.bindTo('bounds', this.map);
-            autocomplete.addListener('place_changed', function() {
+            autocomplete.addListener('place_changed', function () {
+				var s = $("#start").val();
+				var d = $("#destination").val();
                 var place = autocomplete.getPlace();
-
                 if (!place.place_id) {
-                    window.alert("Please select an option from the dropdown list.");
+                    $("#siteInfo").css("display", "block");
+					$("#siteInfoMessage").html("Please select an option from the dropdown list.");
                     return;
                 }
+				if (!s.endsWith("ON, Canada") && s.trim().length > 0){
+					$("#siteInfo").css("display", "block");
+					$("#siteInfoMessage").html("Locations must be in Hamilton, Dundas or Stoney Creek.");
+					$("#start").val("");
+                    return;
+				}
+				if (!d.endsWith("ON, Canada") && d.trim().length > 0){
+					$("#siteInfo").css("display", "block");
+					$("#siteInfoMessage").html("Locations must be in Hamilton, Dundas or Stoney Creek.");
+					$("#destination").val("");
+                    return;
+				}
+				if (!s.includes("Hamilton") && !s.includes("Stoney Creek") && !s.includes("Dundas") && s.trim().length > 0){
+					$("#siteInfo").css("display", "block");
+					$("#siteInfoMessage").html("Locations must be in Hamilton, Dundas or Stoney Creek.");
+					$("#start").val("");
+                    return;
+				}
+				if (!d.includes("Hamilton") && !d.includes("Stoney Creek") && !d.includes("Dundas") && d.trim().length > 0){
+					$("#siteInfo").css("display", "block");
+					$("#siteInfoMessage").html("Locations must be in Hamilton, Dundas or Stoney Creek.");
+					$("#destination").val("");
+                    return;
+				}
                 if (mode === 'ORIG') {
                     me.originPlaceId = place.place_id;
                     me.startLatLng = new google.maps.LatLng({
@@ -356,36 +1171,35 @@
                     });
                 }
                 me.route(me.startLatLng, me.destLatLng);
-                if (me.startLatLng && me.destLatLng){
+                if (me.startLatLng && me.destLatLng) {
                     var bounds = new google.maps.LatLngBounds();
                     bounds.extend(me.startLatLng);
                     bounds.extend(me.destLatLng);
                     map.fitBounds(bounds);
                 }
             });
-
         };
-
-        AutocompleteDirectionsHandler.prototype.route = function(startLatLng, destLatLng) {
+        AutocompleteDirectionsHandler.prototype.route = function (startLatLng, destLatLng) {
             if (!this.originPlaceId || !this.destinationPlaceId) {
                 return;
             }
-
+            $(".user-options").css("display", "none");
+            $("#siteInfo").css("display", "none");
+            isTripOpen = true;
+            if (isLoggedIn) {
+                $("#save-trips-container").css("display", "block");
+                $("#trip-name-group").css("display", "block");
+            }
             var minRacks = parseInt($("#minRacks").val());
             hideMarkers(minRacks);
-
-            if (startMarker != undefined){
-                startMarker.setMap(null);
-            }
-            if (destinationMarker != undefined){
-                destinationMarker.setMap(null);
-            }
-
+            startLocation = $("#start").val();
+            destinationLocation = $("#destination").val();
+            minimumRacks = parseInt($("#minRacks").val());
+            
             var me = this;
             var waypointA;
             var waypointB;
-
-            for (var i = 0; i < hubMarkers.length; i++){
+            for (var i = 0; i < hubMarkers.length; i++) {
                 var hub = hubMarkers[i];
                 var hubLatLng = new google.maps.LatLng({
                     lat: hub.position.lat(),
@@ -393,9 +1207,8 @@
                 });
                 var distance = google.maps.geometry.spherical
                     .computeDistanceBetween(startLatLng, hubLatLng);
-
                 if ((!waypointA || (distance < waypointA.distance))
-                    && hub.getMap() != null){
+                    && hub.getMap() != null) {
                     waypointA = {
                         latlng: hubLatLng,
                         distance: distance,
@@ -403,8 +1216,7 @@
                     };
                 }
             }
-
-            for (var i = 0; i < hubMarkers.length; i++){
+            for (var i = 0; i < hubMarkers.length; i++) {
                 var hub = hubMarkers[i];
                 var hubLatLng = new google.maps.LatLng({
                     lat: hub.position.lat(),
@@ -412,9 +1224,8 @@
                 });
                 var distance = google.maps.geometry.spherical
                     .computeDistanceBetween(destLatLng, hubLatLng);
-
                 if ((!waypointB || (distance < waypointB.distance))
-                    && hub.getMap() != null){
+                    && hub.getMap() != null) {
                     waypointB = {
                         latlng: hubLatLng,
                         distance: distance,
@@ -433,247 +1244,401 @@
                 location: waypointB.latlng,
                 stopover: true
             });
-
-
             this.directionsService.route({
-                origin: {'placeId': this.originPlaceId},
+                origin: { 'placeId': this.originPlaceId },
                 destination: waypointA.latlng,
                 travelMode: 'TRANSIT'
-            }, function(response, status) {
+            }, function (response, status) {
                 if (status === 'OK') {
-                    me.directionsDisplay.setDirections(response);
-
-                    showMarkers();
-                    showWaypoints(waypointA.marker, waypointB.marker);
-
-                    $("#back").css("visibility", "visible");
-
-                    startMarker = new google.maps.Marker({
-                        position: startLatLng,
-                        map: map,
-                        icon: ('https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=S|ffff00')
-                    });
-
-
+					setTimeout(function(){
+						me.directionsDisplay.setDirections(response);
+						showMarkers();
+						showWaypoints(waypointA.marker, waypointB.marker);
+						$("#back").css("display", "block");
+						if (startMarker != undefined) {
+							startMarker.setMap(null);
+						}
+						startMarker = new google.maps.Marker({
+							position: startLatLng,
+							map: map,
+							icon: ('https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=S|ffff00')
+						});
+					},1000);
                 } else {
-                    window.alert('Directions request failed due to ' + status);
+                    
                 }
             });
-
             this.directionsService.route({
                 origin: waypointA.latlng,
                 destination: waypointB.latlng,
                 travelMode: 'BICYCLING'
-            }, function(response, status) {
+            }, function (response, status) {
                 if (status === 'OK') {
-                    me.directionsDisplayWaypoints.setDirections(response);
-
-                    showMarkers();
-                    showWaypoints(waypointA.marker, waypointB.marker);
-
-                    $("#back").css("visibility", "visible");
+					setTimeout(function(){
+						me.directionsDisplayWaypoints.setDirections(response);
+						showMarkers();
+						showWaypoints(waypointA.marker, waypointB.marker);
+						$("#back").css("display", "block");
+					},1000);
                 } else {
-                    window.alert('Directions request failed due to ' + status);
+                    
                 }
             });
-
             this.directionsService.route({
                 origin: waypointB.latlng,
-                destination: {'placeId': this.destinationPlaceId},
+                destination: { 'placeId': this.destinationPlaceId },
                 travelMode: 'TRANSIT'
-            }, function(response, status) {
+            }, function (response, status) {
                 if (status === 'OK') {
-                    me.directionsDisplayEnd.setDirections(response);
-
-                    showMarkers();
-                    showWaypoints(waypointA.marker, waypointB.marker);
-
-                    $("#back").css("visibility", "visible");
-
-                    destinationMarker = new google.maps.Marker({
-                        position: destLatLng,
-                        map: map,
-                        icon: ('https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=D|00ff00')
-                    });
+					setTimeout(function(){
+						me.directionsDisplayEnd.setDirections(response);
+						showMarkers();
+						showWaypoints(waypointA.marker, waypointB.marker);
+						$("#back").css("display", "block");
+						if (destinationMarker != undefined) {
+							destinationMarker.setMap(null);
+						}
+						destinationMarker = new google.maps.Marker({
+							position: destLatLng,
+							map: map,
+							icon: ('https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=D|00ff00')
+						});
+					},1000);
                 } else {
-                    window.alert('Directions request failed due to ' + status);
+                    
                 }
             });
-
             $("#map-container").removeClass("col-lg-12 col-md-12 col-sm-12");
             $("#map-container").addClass("col-lg-9 col-md-9 col-sm-8");
-            $("#right-panel").css("visibility", "visible");
+            $("#right-panel").css("display", "block");
         };
-
-        function showWaypoints(waypointA, waypointB){
+        function showWaypoints(waypointA, waypointB) {
             var waypoints = [waypointA, waypointB];
             for (var i = 0; i < hubMarkers.length; i++) {
-                if (!waypoints.includes(hubMarkers[i])){
+                if (!waypoints.includes(hubMarkers[i])) {
                     hubMarkers[i].setMap(null);
                 }
             }
         }
-
-        function hideMarkers(minRacks){
+        function hideMarkers(minRacks) {
             showMarkers();
             for (var i = 0; i < hubMarkers.length; i++) {
                 var hubRacks = parseInt(hubMarkers[i].racks);
-                if (minRacks > hubRacks){
+                if (minRacks > hubRacks) {
                     hubMarkers[i].setMap(null);
                 }
             }
         }
-
-        function showMarkers(){
+        function showMarkers() {
             for (var i = 0; i < hubMarkers.length; i++) {
                 hubMarkers[i].setMap(map);
             }
         }
+        function displayUserOptions() {
+            $(".user-options").css("display", "block");
+        }
     </script>
 </head>
 <body>
-<form class="form-horizontal container-fluid">
-    <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-2">
-            <h1>SoBi Maps</h1>
+    <div id="sobiForm" class="form-horizontal container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-2">
+                <h1>SoBi Maps</h1>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+				<div class="form-group" id="friend-username-group">
+                    <label for="friendUsername" class="control-label col-sm-3">Friend Username:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control input-sm" id="friendUsername">
+						<br />
+						<button id="addFriendButton" class="btn btn-primary btn-block">Add Friend</button>
+                    </div>
+                </div>
+				
+                <div class="form-group" id ="start-group">
+                    <label for="start" class="control-label col-sm-3">Start:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control input-sm" id="start">
+                    </div>
+                </div>
+                <div class="form-group" id ="destination-group">
+                    <label for="destination" class="control-label col-sm-3">Destination:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control input-sm" id="destination">
+                    </div>
+                </div>
+                <div class="form-group" id="trip-name-group">
+                    <label for="tripName" class="control-label col-sm-3">Trip Name:</label>
+                    <div class="col-sm-9">
+                        <input type="text" maxlength="50" class="form-control input-sm" id="tripName" placeholder="Enter a trip name">
+                    </div>
+                </div>
+				<div class="form-group" id="location-name-group">
+					<label for="locationName" class="control-label col-sm-3">Location Name:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control input-sm" id="locationName">
+                    </div>
+				</div>
+				<div class="form-group" id="location-address-group">
+					<label for="locationAddress" class="control-label col-sm-3">Location Address:</label>
+					<div class="col-sm-9">
+                        <input type="text" class="form-control input-sm" id="locationAddress">				
+                    </div>
+				</div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                <div class="form-group" id="racks-group">
+                    <label for="racks" class="control-label col-lg-2 col-md-2 col-sm-3" style="padding-right: 0;">Racks:</label>
+                    <div class="col-lg-10 col-md-10 col-sm-9" style="display: inline-block; margin-right: 0; margin-left: 0;">
+                        <input type="number" value="5" step="1" min="5" max="25" class="form-control input-sm col-lg-4 col-md-4 col-sm-4 col-xs-4" id="minRacks" style="width: 55px; margin-right: 1em;">
+                        <span class="" style="">or more</span>
+                    </div>
+                </div>
+            </div>
+            <div class="topcorner">
+                <div id="loggedUser"></div>
+                <div><a id="signInLink" href="#">Sign in</a></div>
+                <div><a id="signUpLink" href="signUp.html">Sign up</a></div>
+                <div><a id="signOutLink" href="#">Sign out</a></div>
+                <div><a href="#help">Help</a></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row container-fluid" style="margin: 0; padding: 0;">
+        <div class="col-lg-3 col-md-3 col-sm-3">
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6">
-            <div class="form-group">
-                <label for="start" class="control-label col-sm-3">Start:</label>
-                <div class="col-sm-9">
-                    <input type="text" class="form-control input-sm" id="start">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="destination" class="control-label col-sm-3">Destination:</label>
-                <div class="col-sm-9">
-                    <input type="text" class="form-control input-sm" id="destination">
-                </div>
+            <div id="siteInfo" class="alert alert-success alert-dismissible">
+                <a href="#" class="close">&times;</a>
+                <span id="siteInfoMessage"></span>
             </div>
         </div>
+    </div>
+
+    <div class="row container-fluid" style="margin: 0; padding: 0;">
         <div class="col-lg-4 col-md-4 col-sm-4">
-            <div class="form-group">
-                <label for="racks" class="control-label col-lg-2 col-md-2 col-sm-3" style="padding-right: 0;">Racks:</label>
-                <div class="col-lg-10 col-md-10 col-sm-9" style="display: inline-block; margin-right: 0; margin-left: 0;">
-                    <input type="number" value="5" step="1" min="5" max="25" class="form-control input-sm col-lg-4 col-md-4 col-sm-4 col-xs-4" id="minRacks" style="width: 55px; margin-right: 1em;">
-                    <span class="" style="">or more</span>
-                </div>
+            <img id="back" src="images/back.png">
+        </div>
+
+        <div id="save-trips-container" class="col-lg-4 col-md-4 col-sm-4">
+            <div class="btn-group-justified" role="group">
+                <button style="width: 100%;" type="button"
+                        class="btn btn-default" id="saveToTripsButton">
+                    Add to Trips
+                </button>
+                <button style="width: 100%;" type="button"
+                        class="btn btn-primary" id="saveTripEditButton">
+                    Save Changes
+                </button>
+                <button style="width: 100%;" type="button"
+                        class="btn btn-danger" id="cancelTripEditButton">
+                    Cancel
+                </button>
             </div>
         </div>
-        <div class="topcorner">
-            <div><a id="signIn" href="#">Sign in</a></div>
-            <div><a href="signUp.html">Sign up</a></div>
-            <div><a href="#">Help</a></div>
-        </div>
-    </div>
-</form>
-
-<div class="row container-fluid" style="margin: 0; padding: 0;">
-    <div class="col-lg-4 col-md-4 col-sm-4">
-        <img id="back" src="back.png">
-    </div>
-
-    <div class="col-lg-4 col-md-4 col-sm-4 form-signin">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <label for="username" class="sr-only">Username</label>
-        <input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
-        <label for="password" class="sr-only">Password</label>
-        <input type="password" id="password" class="form-control" placeholder="Password" required>
-        <button id="signInButton" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        <br />
-    </div>
-</div>
-
-<div class="row container-fluid" style="margin: 0; padding: 0;">
-    <div id="map-container" class="col-lg-12 col-md-12 col-sm-12" style="padding: 0;">
-        <div id="map" style="padding: 0;"></div>
-    </div>
-    <div id="right-panel" class="col-lg-3 col-md-3 col-sm-4">
-        <div id="right-panel-start"></div>
-        <div id="right-panel-waypoints"></div>
-        <div id="right-panel-end"></div>
-    </div>
-    <!--<div class="col-lg-3 col-md-3 col-sm-4" style="padding: 0;">
-        <div id="infoWindow" style="padding: 0;">
-            <div class="title">Location Info</div><br /><br />
-            <div class="row container-fluid">
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 info">Name: </div>
-                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="name"></div>
-            </div>
-            <br /><br />
-            <div class="row container-fluid">
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 info">Address: </div>
-                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="address"></div>
-            </div>
-            <br /><br />
-            <div class="row container-fluid">
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 info">Latitude: </div>
-                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="latitude"></div>
-            </div>
-            <br /><br />
-            <div class="row container-fluid">
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 info">Longitude: </div>
-                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="longitude"></div>
-            </div>
-            <br /><br />
-            <div class="row container-fluid">
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 info">Racks: </div>
-                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="racks"></div>
-            </div>
-            <br /><br />
-            <div id="linkContainer"><a id="mapsLink" target="_blank">Open in Google Maps</a></div>
-        </div>
-    </div>-->
-</div>
-<div class="row container-fluid" style="margin: 0; padding: 0;">
-    <div id="help" style="padding: 20px; text-align: center; font-size: 13pt;">
-        <div class="title">Help</div><br />
-        <p>Welcome to SoBi Maps, the place to find all the different SoBi Bicycle Hubs across Hamilton.
-            This website helps you find SoBi (Social Bicycle) hubs that are the closest to your starting and destination point.
-        </p><br />
-
-        <div class="subtitle">Search Options</div><br />
-        <div style="text-align: left; display: table; margin: 0 auto;">
-            <div class="info">Start: </div>
-            <span>
-						Your starting point, address or a place, must be in Hamilton, Ontario.
-					</span>
+		<div id="location-group" class="col-lg-4 col-md-4 col-sm-4">
+			<div class="btn-group-justified" role="group">
+				<button style="width: 100%;" type="button" 
+					id="addLocationButton" class="btn btn-primary btn-block">
+					Add Location
+				</button>
+				<button style="width: 100%;" type="button"
+						class="btn btn-primary" id="saveLocationEditButton">
+					Save Changes
+				</button>
+				<button style="width: 100%;" type="button"
+						class="btn btn-danger" id="cancelLocationEditButton">
+					Cancel
+				</button>
+			</div>
+        </div>		
+        <form id="signInForm" class="col-lg-4 col-md-4 col-sm-4 form-signin">
+            <h2 class="form-signin-heading">Please sign in</h2>
+            <label for="username" class="sr-only">Username</label>
+            <input type="text" maxlength="20" id="username" class="form-control" placeholder="Username" required autofocus>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Password" required>
+            <button id="signInButton" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            <button id="signInCancel" class="btn btn-lg btn-danger btn-block">Cancel</button>
+            <div id="signInMessage" class="alert alert-danger"></div>
             <br />
-            <div class="info">Destination: </div>
-            <span>
-						Your destination point, address or a place, must be in Hamilton, Ontario.
-					</span>
-            <br />
-            <div class="info">Racks: </div>
-            <span>
-						The minimum number of bike racks at a location, must be between 5 and 25 (eg, 5 or more bike racks).
-					</span>
-        </div>
-        <br /><br />
-
-        <div style="text-align: left; display: table; margin: 0 auto;">
-            <div class="subtitle">Map Legend</div><br />
-            <span><img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FE7569" />
-					Your current location</span><br />
-            <span><img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=S|ffff00" />
-					Starting point</span><br />
-            <span><img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=D|00ff00" />
-					Destination point</span><br />
-            <span><img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|b3d1ff" />
-					A bike hub location with 5 or more bike racks</span><br />
-            <span><img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|80b3ff" />
-					A bike hub location with 10 or more bike racks</span><br />
-            <span><img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|3385ff" />
-					A bike hub location with 15 or more bike racks</span><br />
-            <span><img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|0052cc" />
-					A bike hub location with 20 or more bike racks</span><br />
-        </div>
-        <br />
-        <p><strong>Click on any hub location to get more information such as latitude,
-            longitude, and number of bike racks at the location.</strong></p>
-        <p><strong>The number on the pins represent the number of bike racks at that hub.</strong></p>
+        </form>
     </div>
-</div>
 
+    <div class="row container-fluid user-options" style="margin: 0; padding: 0;">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 btn-container">
+            <div class="btn-group-justified" role="group">
+                <button style="width: 100%;" type="button"
+                        class="btn btn-default" id="myTripsButton">
+                    My Trips
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 btn-container">
+            <div class="btn-group-justified" role="group">
+                <button style="width: 100%;" type="button"
+                        class="btn btn-default" id="sharedTripsButton">
+                    Shared Trips
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+        </div>
+    </div>
+    <div class="row container-fluid user-options" style="margin: 0; padding: 0;">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 btn-container">
+            <div class="btn-group-justified" role="group">
+                <button style="width: 100%;" type="button"
+                        class="btn btn-default" id="locationsButton">
+                    Locations
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 btn-container">
+            <div class="btn-group-justified" role="group">
+                <button style="width: 100%;" type="button"
+                        class="btn btn-default" id="friendsButton">
+                    Friends
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+        </div>
+    </div>
+    <table id="myTripsTable" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Trip Name</th>
+                <th>Start</th>
+                <th>Destination</th>
+                <th>Racks</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+	<table id="myLocationsTable" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Location Name</th>
+                <th>Address</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <table id="myFriendsTable" class="table table-bordered">
+		<caption>My Friends</caption>
+        <thead>
+            <tr>
+                <th>Friend Username</th>
+                <th>Status</th>
+				<th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+	<table id="myFriendRequestsTable" class="table table-bordered">
+		<caption>Friend Requests</caption>
+        <thead>
+            <tr>
+                <th>Username</th>
+				<th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+	<table id="friendTripTable" class="table table-bordered">
+		<caption>Select a Friend to share a trip with</caption>
+        <thead>
+            <tr>
+                <th>Friend Username</th>
+				<th>Share</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <br />
+    <div class="row container-fluid" style="margin: 0; padding: 0;">
+        <div id="map-container" class="col-lg-12 col-md-12 col-sm-12" style="padding: 0;">
+            <div id="map" style="padding: 0;"></div>
+        </div>
+        <div id="right-panel" class="col-lg-3 col-md-3 col-sm-4">
+            <div id="right-panel-start"></div>
+            <div id="right-panel-waypoints"></div>
+            <div id="right-panel-end"></div>
+        </div>
+    </div>
+    <div class="row container-fluid" style="margin: 0; padding: 0;">
+        <div id="help" style="padding: 20px; text-align: center; font-size: 13pt;">
+            <div class="title">Help</div><br />
+            <p>
+                Welcome to SoBi Maps, the place to find all the different SoBi Bicycle Hubs across Hamilton.
+                This website helps you find SoBi (Social Bicycle) hubs that are the closest to your starting and destination point.
+            </p><br />
+
+            <div class="subtitle">Search Options</div><br />
+            <div style="text-align: left; display: table; margin: 0 auto;">
+                <div class="info">Start: </div>
+                <span>
+                    Your starting point, address or a place, must be in Hamilton, Ontario.
+                </span>
+                <br />
+                <div class="info">Destination: </div>
+                <span>
+                    Your destination point, address or a place, must be in Hamilton, Ontario.
+                </span>
+                <br />
+                <div class="info">Racks: </div>
+                <span>
+                    The minimum number of bike racks at a location, must be between 5 and 25 (eg, 5 or more bike racks).
+                </span>
+            </div>
+            <br /><br />
+
+            <div style="text-align: left; display: table; margin: 0 auto;">
+                <div class="subtitle">Map Legend</div><br />
+                <span>
+                    <img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FE7569" />
+                    Your current location
+                </span><br />
+                <span>
+                    <img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=S|ffff00" />
+                    Starting point
+                </span><br />
+                <span>
+                    <img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=D|00ff00" />
+                    Destination point
+                </span><br />
+				<span>
+                    <img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=L|ff6600" />
+                    A location you opened from one of your saved locations.
+                </span><br />
+                <span>
+                    <img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|b3d1ff" />
+                    A bike hub location with 5 or more bike racks
+                </span><br />
+                <span>
+                    <img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|80b3ff" />
+                    A bike hub location with 10 or more bike racks
+                </span><br />
+                <span>
+                    <img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|3385ff" />
+                    A bike hub location with 15 or more bike racks
+                </span><br />
+                <span>
+                    <img src="https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|0052cc" />
+                    A bike hub location with 20 or more bike racks
+                </span><br />
+            </div>
+            <br />
+            <p><strong>The number on the pins represent the number of bike racks at that hub.</strong></p>
+        </div>
+    </div>
 </body>
 </html>

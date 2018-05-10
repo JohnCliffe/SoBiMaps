@@ -1,0 +1,105 @@
+ body {
+            background-color: #ccf5ff;
+        }
+
+        form {
+            margin-top: 1em;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            padding: 0;
+        }
+
+        #map{
+            height: 650px;
+            background:#6699cc;
+        }
+
+        #right-panel{
+            height: 650px;
+            background-color: white;
+            overflow-y: scroll;
+        }
+
+        #infoWindow{
+            height: 500px;
+            background: lightgreen;
+            display: none;
+        }
+
+        #mapsLink, .iwMapsLink{
+            font-style: italic;
+        }
+
+        #linkContainer{
+            text-align: center;
+        }
+
+        .title{
+            padding-top: 10px;
+            font-size: 24pt;
+            text-align: center;
+        }
+
+        .subtitle{
+            font-size: 18pt;
+            text-align: center;
+        }
+
+        #help {
+            background-color: skyblue;
+            width: 100vw;
+            border: 3px solid blue;
+        }
+
+        .info {
+            font-weight: bold;
+        }
+
+        #minRacks{
+            user-select: none;
+        }
+
+        .topcorner{
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+
+        #back {
+            width: 50px;
+            height: 50px;
+            margin-left: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            visibility: hidden;
+        }
+
+        #right-panel {
+            visibility: hidden;
+        }
+
+        .adp-warnbox, .adp-legal{
+            display: none;
+        }
+
+        .adp-marker2 {
+            content: url("https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FE7569");
+        }
+
+        #right-panel-waypoints .adp-text, #right-panel-waypoints .adp-marker2 {
+            display: none;
+        }
+
+        .form-signin{
+            display: none;
+        }
+		
+		.control-group {
+			width: 100%;
+			max-width: 400px;
+		}
